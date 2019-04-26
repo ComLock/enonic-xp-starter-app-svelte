@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.enonic.xp.app' version '1.1.0'
+    id 'com.moowork.node' version '1.2.0'
+}
+
+app {
+    name = "${appName}"
+    displayName = "${appDisplayName}"
+    vendorName = "${vendorName}"
+    vendorUrl = "${vendorUrl}"
+    systemVersion = "${xpVersion}"
+}
+
+dependencies {
+    compile "com.enonic.xp:core-api:${xpVersion}"
+    compile "com.enonic.xp:portal-api:${xpVersion}"
+
+    include "com.enonic.xp:lib-content:${xpVersion}"
+    include "com.enonic.xp:lib-io:${xpVersion}"
+    include "com.enonic.xp:lib-portal:${xpVersion}"
+
+    //include "com.enonic.lib:lib-thymeleaf:2.0.0-RC1"
+    //include "com.enonic.xp:lib-auth:${xpVersion}"
+    //include "com.enonic.xp:lib-context:${xpVersion}"
+    //include "com.enonic.xp:lib-i18n:${xpVersion}"
+    //include "com.enonic.xp:lib-mail:${xpVersion}"
+    //include "com.enonic.xp:lib-repo:${xpVersion}"
+    //include "com.enonic.xp:lib-websocket:${xpVersion}"
+    //include "com.enonic.lib:lib-mustache:2.0.0"
+    //include "com.enonic.lib:lib-util:2.0.0"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    xp.enonicRepo()
+}
+
+tasks.withType(Copy) {
+  includeEmptyDirs = false
+}
+
+wrapper {
+	//gradleVersion = "${gradleVersion}"
+  gradleVersion = '4.10.3'
+  distributionUrl = distributionUrl.replace("bin", "all")
+}
+
+node {
+	version "${nodeVersion}"
+	download true
+}
+
+task svelte(type:NpmTask) {
+  dependsOn npmInstall
+  mustRunAfter npmInstall
+  args = ['run', 'build']
+  outputs.dir './build/resources/main' // processResources will delete the directory if this is not present
+}
+
+processResources {
+	dependsOn svelte
+	mustRunAfter svelte
+
+  exclude '**/.gitkeep'
+  exclude '**/*.svelte'
+}
+
+publishing {
+	publications {
+		mavenJava( MavenPublication ) {
+			from components.java
+		}
+	}
+	/*repositories {
+		maven {
+			url 'http://repo.enonic.net/artifactory/public'
+		}
+	}*/
+}
