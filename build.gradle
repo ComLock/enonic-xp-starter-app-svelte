@@ -53,18 +53,34 @@ node {
 	download true
 }
 
-task svelte(type:NpmTask) {
+task svelte(type:NodeTask) {
   dependsOn npmInstall
   mustRunAfter npmInstall
-  args = ['run', 'build']
-  outputs.dir './build/resources/main' // processResources will delete the directory if this is not present
+  script = file('node_modules/.bin/rollup')
+  args = [
+   '-c'
+  ]
+  //outputs.dir './build/resources/main/' // processResources will delete the directory if this is not present
+}
+
+task webpack(type:NodeTask) {
+  dependsOn svelte
+  mustRunAfter svelte
+	script = file('node_modules/webpack-cli/bin/cli.js')
+	args = [
+		'--color'
+	]
+	outputs.dir './build/resources/main/' // processResources will delete the directory if this is not present
 }
 
 processResources {
-	dependsOn svelte
-	mustRunAfter svelte
+	dependsOn webpack
+	mustRunAfter webpack
 
   exclude '**/.gitkeep'
+
+  // Let webpack handle these (rather than gradle)
+  exclude '**/*.es'
   exclude '**/*.svelte'
 }
 
