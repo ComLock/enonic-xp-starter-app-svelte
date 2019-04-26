@@ -1,13 +1,17 @@
 import 'es6-shim'; // Map Set for svelte
 //import safeStringify from 'fast-safe-stringify';
 
-//import {toStr} from '/lib/enonic/util';
+import {toStr} from '/lib/enonic/util';
 import {getResource, readText} from '/lib/xp/io';
-import App from './bundle';
+import App from './ssr';
 
 export function get() {
-  const obj = App.render({name: 'World'});
-  //log.info(safeStringify({obj}));
+  const model = {name: 'World'};
+  const obj = App.render(model);
+  log.info(toStr({obj}));
+
+  //const svelte = readText(getResource('/site/pages/svelte/svelte.svelte').getStream());
+  const clientside = readText(getResource('/site/pages/svelte/clientside.js').getStream());
 
   const htmlStr = `<!DOCTYPE html>
 <html>
@@ -20,7 +24,17 @@ export function get() {
   </style>
 </head>
 <body>
-  ${obj.html}
+  <main id="server-rendered-html">
+    ${obj.html}
+  </main>
+  <script>
+    ${clientside}
+    new window.App({
+      hydrate: true,
+	    props: ${JSON.stringify(model)},
+      target: document.querySelector('#server-rendered-html')
+    });
+  </script>
 </body>
 </html>`;
   return {
