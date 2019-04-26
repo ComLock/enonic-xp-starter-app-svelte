@@ -9,6 +9,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 //import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 //import postcssPresetEnv from 'postcss-preset-env';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'; // Supports ECMAScript2015
+import webpack from 'webpack';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -112,10 +113,16 @@ const SERVER_JS_CONFIG = {
 		filename: '[name].js',
 		libraryTarget: 'commonjs'
 	}, // output
+	plugins: [
+		new webpack.ProvidePlugin({
+			global: 'myGlobal'
+		})
+	],
 	resolve: {
 		alias: {
-			'/content-types': path.resolve(__dirname, SRC_DIR, 'site/content-types/index.es'),
-			'/lib': path.resolve(__dirname, SRC_DIR, 'lib')
+			myGlobal: path.resolve(__dirname, SRC_DIR, 'lib/enonic/starter/app/svelte/global')
+			//'/content-types': path.resolve(__dirname, SRC_DIR, 'site/content-types/index.es'),
+			//'/lib': path.resolve(__dirname, SRC_DIR, 'lib')
 		},
 		extensions: ['.es', '.js', '.json']
 	}, // resolve

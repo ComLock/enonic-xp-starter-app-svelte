@@ -16,20 +16,21 @@ const SVELTE_FILES = glob.sync(SRC_DIR + '/**/*.svelte');
 //console.log(`SVELTE_FILES:${toStr(SVELTE_FILES)}`);
 
 const CONFIG_ARRAY = SVELTE_FILES.map(input => {
-  const DST_PATH = DST_DIR + input.replace(SRC_DIR, '').replace(/\/[^\/]+$/, '');
+  //const DST_PATH = DST_DIR + input.replace(SRC_DIR, '').replace(/\/[^\/]+$/, '');
+  const DST_PATH = input.replace(/\/[^\/]+$/, '');
   //console.log(`DST_PATH:${toStr(DST_PATH)}`);
-  const NAME = '_' + input.replace(/.*\//, '').replace(/\.[^.]+$/, '');
+  //const NAME = '_' + input.replace(/.*\//, '').replace(/\.[^.]+$/, '');
   //console.log(`NAME:${toStr(NAME)}`);
   return {
     input,
     output: {
   		sourcemap: false,
-  		format: 'iife', // Browsers
-      //format: 'cjs', // Node
+  		//format: 'iife', // Browsers
+      format: 'cjs', // Node
       //format: 'umd', // Browsers and Node
   		name: 'App',
   		//file: DST_PATH + '/' + NAME + '.js'
-      file: DST_PATH + '/' + 'bundle' + '.js'
+      file: DST_PATH + '/' + 'bundle' + '.es'
   	},
     plugins: [
   		svelte({
@@ -37,10 +38,11 @@ const CONFIG_ARRAY = SVELTE_FILES.map(input => {
   			dev: !PRODUCTION,
   			// we'll extract any component CSS out into
   			// a separate file — better for performance
-  			css: css => {
+  			/*css: css => {
   				//css.write(DST_PATH + '/' + NAME + '.css', false);
           css.write(DST_PATH + '/' + 'bundle' + '.css', false);
-  			}
+  			},*/
+        generate: 'ssr' // as opposed to 'dom', the default
   		}),
 
   		// If you have external dependencies installed from

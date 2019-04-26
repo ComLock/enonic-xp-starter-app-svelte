@@ -1,31 +1,30 @@
+import 'es6-shim'; // Map Set for svelte
+//import safeStringify from 'fast-safe-stringify';
+
+//import {toStr} from '/lib/enonic/util';
 import {getResource, readText} from '/lib/xp/io';
+import App from './bundle';
 
 export function get() {
-  var css = readText(getResource('/site/pages/svelte/bundle.css').getStream());
-  var js = readText(getResource('/site/pages/svelte/bundle.js').getStream());
+  const obj = App.render({name: 'World'});
+  //log.info(safeStringify({obj}));
+
+  const htmlStr = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf8'>
+  <meta name='viewport' content='width=device-width'>
+  <title>Svelte app</title>
+  <style>
+    ${obj.css.code}
+  </style>
+</head>
+<body>
+  ${obj.html}
+</body>
+</html>`;
   return {
     contentType: 'text/html;charset=utf-8',
-    body: `<!doctype html>
-<html>
-  <head>
-    <meta charset='utf8'>
-    <meta name='viewport' content='width=device-width'>
-    <title>Svelte app</title>
-  	<style type="text/css">
-      ${css}
-    </style>
-  </head>
-  <body>
-  	<script type="text/javascript">
-      ${js}
-      new window.App({
-        target: document.body,
-	       props: {
-           name: 'world'
-         }
-       });
-     </script>
-  </body>
-</html>`
+    body: htmlStr
   }
 }
