@@ -81,7 +81,7 @@ processResources {
 
   // Let webpack handle these (rather than gradle)
   exclude '**/*.es'
-  //exclude '**/*.svelte'
+  exclude '**/*.svelte'
 }
 
 publishing {

@@ -98,7 +98,20 @@ const SERVER_JS_CONFIG = {
 	devtool: false, // Don't waste time generating sourceMaps
 	mode: MODE,
 	module: {
-		rules: [ES_RULE]
+		rules: [
+			{
+				test: /\.svelte$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'svelte-loader',
+					options: {
+						emitCss: true,
+						hotReload: false//true
+					}
+				}
+			},
+			ES_RULE
+		]
 	}, // module
 	optimization: {
 		minimizer: [
@@ -124,7 +137,7 @@ const SERVER_JS_CONFIG = {
 			//'/content-types': path.resolve(__dirname, SRC_DIR, 'site/content-types/index.es'),
 			//'/lib': path.resolve(__dirname, SRC_DIR, 'lib')
 		},
-		extensions: ['.es', '.js', '.json']
+		extensions: ['.es', '.js', '.json', '.svelte']
 	}, // resolve
 	stats: STATS
 };

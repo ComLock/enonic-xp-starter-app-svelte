@@ -5,6 +5,7 @@ import {toStr} from '/lib/enonic/util';
 import {getResource, readText} from '/lib/xp/io';
 import App from './ssr';
 
+
 export function get() {
   const model = {name: 'World'};
   const obj = App.render(model);
